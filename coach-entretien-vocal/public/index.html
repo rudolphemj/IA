@@ -1,0 +1,38 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Coach Entretien Vocal</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<h1>Coach d'entretien d'embauche</h1>
+
+<h2>1. Appel d'offre recruteur</h2>
+<textarea id="offer" placeholder="Collez ici l'appel d'offre complet..."></textarea>
+<button onclick="saveOffer()">Valider l'appel d'offre</button>
+
+<h2>2. Paramétrage entretien</h2>
+<div class="config">
+  <label>Entreprise (sec): <input id="tCompany" value="60"></label>
+  <label>Candidat (sec): <input id="tCandidate" value="120"></label>
+  <label>Questions (sec): <input id="tQuestions" value="180"></label>
+  <button onclick="startInterview()">Démarrer</button>
+
+  <button onclick="startInterview()">Démarrer</button>
+  <button onclick="pauseResume()">Pause</button>
+  <button onclick="stopInterview()">Stop</button>
+
+</div>
+
+<div id="stage"></div>
+<div id="timer">00:00</div>
+
+
+
+
+
+<script src="js/app.js"></script>
+</body>
+</html>

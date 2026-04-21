@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Entretien – Coach vocal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+    }
+    .box {
+      background: white;
+      padding: 25px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 8px;
+    }
+    pre {
+      background: #eee;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box" id="content"></div>
+
+<script>
+  const content = document.getElementById("content");
+
+  const storedProfile = localStorage.getItem("jobProfile");
+
+  if (!storedProfile) {
+    content.innerHTML = `
+      <h2>❌ Aucun profil trouvé</h2>
+      <p>Merci de commencer par définir le profil du poste.</p>
+      /⬅ Retour</a>
+    `;
+  } else {
+    const profile = JSON.parse(storedProfile);
+
+    content.innerHTML = `
+      <h1>🎤 Entretien simulé</h1>
+
+      <p><strong>Poste :</strong> ${profile.title}</p>
+      <p><strong>Niveau :</strong> ${profile.level}</p>
+      <p><strong>Compétences :</strong> ${profile.skills}</p>
+      <p><strong>Contexte :</strong> ${profile.context}</p>
+
+      <h3>📄 Données complètes</h3>
+      <pre>${JSON.stringify(profile, null, 2)}</pre>
+
+      <p>✅ Page entretien prête</p>
+    `;
+  }
+</script>
+
+</body>
+</html>

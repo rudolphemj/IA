@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profil du poste</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 40px;
+    }
+
+    form {
+      background: white;
+      padding: 25px;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 8px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, textarea, select, button {
+      width: 100%;
+      margin-top: 5px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #e8ffe8;
+      border: 1px solid #5cb85c;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>📄 Profil du poste</h1>
+
+  <form id="jobForm">
+    <label>
+      Intitulé du poste
+      <input type="text" id="title" required />
+    </label>
+
+    <label>
+      Compétences clés
+      <textarea id="skills" required></textarea>
+    </label>
+
+    <label>
+      Niveau attendu
+      <select id="level">
+        <option>Junior</option>
+        <option>Confirmé</option>
+        <option>Senior</option>
+      </select>
+    </label>
+
+    <label>
+      Contexte du poste
+      <textarea id="context"></textarea>
+    </label>
+
+<button type="submit">
+  ▶️ Commencer l’entretien
+</button>
+  </form>
+
+  <div id="result"></div>
+
+<script>
+  const form = document.getElementById("jobForm");
+  const result = document.getElementById("result");
+
+  const storedProfile = localStorage.getItem("jobProfile");
+  if (storedProfile) {
+    result.style.display = "block";
+    result.innerHTML = `
+      <h3>📦 Profil déjà enregistré</h3>
+      <pre>${storedProfile}</pre>
+    `;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const profile = {
+      title: document.getElementById("title").value,
+      skills: document.getElementById("skills").value,
+      level: document.getElementById("level").value,
+      context: document.getElementById("context").value,
+      savedAt: new Date().toLocaleString("fr-FR")
+    };
+
+    localStorage.setItem("jobProfile", JSON.stringify(profile, null, 2));
+
+    window.location.href = "/interview";
+  });
+</script>
+</body>
+</html>
