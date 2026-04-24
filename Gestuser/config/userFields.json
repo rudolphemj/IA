@@ -1,0 +1,38 @@
+[
+  {
+    "key": "name",
+    "label": "Nom",
+    "type": "text",
+    "required": true
+  },
+  {
+    "key": "prenom",
+    "label": "Prénom",
+    "type": "text",
+    "required": true
+  },
+  {
+    "key": "age",
+    "label": "Age",
+    "type": "number",
+    "required": false
+  },
+  {
+    "key": "profession",
+    "label": "Profession",
+    "type": "text",
+    "required": false
+  },
+  {
+    "key": "sexe",
+    "label": "Sexe",
+    "type": "text",
+    "required": true
+  },
+  {
+    "key": "telephone",
+    "label": "Téléphone",
+    "type": "number",
+    "required": false
+  }
+]

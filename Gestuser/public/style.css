@@ -1,0 +1,66 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+}
+
+h1 {
+  color: #333;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background: #f4f4f4;
+  text-align: left;
+}
+
+tr:hover {
+  background: #f9f9f9;
+}
+
+form {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+form button {
+  width: auto;
+  justify-self: start; /* ou center */
+  padding: 8px 16px;
+}
+
+
+.message {
+  background: #4caf50;
+  color: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}

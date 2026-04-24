@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Configuration</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>⚙️ Configuration des champs utilisateurs</h1>
+
+<a href="users.html">⬅️ Retour utilisateurs</a>
+
+<h3>Ajouter un champ</h3>
+<form id="fieldForm">
+  <input placeholder="key (ex: email)" id="key" required>
+  <input placeholder="Label" id="label" required>
+  <select id="type">
+    <option value="text">Texte</option>
+    <option value="number">Nombre</option>
+  </select>
+  <label>
+    <input type="checkbox" id="required"> Requis
+  </label>
+  <button>Ajouter</button>
+</form>
+
+<ul id="fieldsList"></ul>
+
+<script src="config.js"></script>
+</body>
+</html>
