@@ -107,6 +107,7 @@ const loadUsers = async () => {
 
     tbody.appendChild(tr);
   });
+console.log('Users reçus:', users);
 };
 
 /* ===========================
