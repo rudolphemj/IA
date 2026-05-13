@@ -19,6 +19,7 @@ async function getShattaVideos() {
         part: "snippet",
         q: "shatta clip officiel",
         type: "video",
+	videoCategoryId: "10", 
         order: "date",
         maxResults: 20,
         publishedAfter: getDate30DaysAgo(),
