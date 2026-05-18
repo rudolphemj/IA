@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recherche YouTube</title>
+</head>
+<body>
+
+  <h1>🔍 Recherche de vidéos</h1>
+
+  <input type="text" id="query" placeholder="Ex: shatta clip officiel" />
+  <button onclick="search()">Rechercher</button>
+
+  <div id="results"></div>
+
+  <script>
+    async function search() {
+      const query = document.getElementById("query").value;
+
+      const response = await fetch("/search", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ query })
+      });
+
+      const data = await response.json();
+
+      const resultsDiv = document.getElementById("results");
+      resultsDiv.innerHTML = "";
+
+      data.forEach(video => {
+        const title = video.snippet.title;
+        const channel = video.snippet.channelTitle;
+        const videoId = video.id.videoId;
+
+        const html = `
+          <div style="margin-bottom:20px">
+            <h3>${title}</h3>
+            <p>📺 ${channel}</p>
+            <a href/www.youtube.com/watch?v=${videoId}
+              Voir la vidéo
+            </a>
+          </div>
+        `;
+
+        resultsDiv.innerHTML += html;
+      });
+    }
+  </script>
+
+</body>
+</html>
