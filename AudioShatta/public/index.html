@@ -83,116 +83,142 @@
 
 <body>
 
-<h1>🔥 Nouveaux clips Shatta (30 jours)</h1>
+<h1>🔥 Nouveaux clips Shatta (60 jours)</h1>
 
 <div id="videos"></div>
 <div id="error" class="error"></div>
 
+<input id="searchInput" type="text" placeholder="Recherche une vidéo...">
+
+<label style="margin-left:10px;">
+  <input type="checkbox" id="officialOnly">
+  🎬 Clip officiel
+</label>
+
+
+
+<button onclick="searchVideos()"> 🔍 Rechercher</button>
+
+
+<div id="results"></div>
+
 <script>
-async function loadVideos() {
+
+// propose une recherche
+async function searchVideos() {
+
+
   try {
-    const res = await fetch("/api/videos");
-    const data = await res.json();
+    let query = document.getElementById("searchInput").value;
 
-    console.log("Réponse API:", data);
-
-    let videos = [];
-
-    if (Array.isArray(data)) {
-      videos = data;
-    } else if (Array.isArray(data.items)) {
-      videos = data.items;
-    } else {
-      throw new Error("Format inattendu reçu du serveur");
+    if (!query) {
+      alert("Veuillez entrer un texte");
+      return;
     }
 
-    const container = document.getElementById("videos");
-    container.innerHTML = "";
 
-    videos.forEach(video => {
-      if (!video.id?.videoId) return;
+ // ✅ vérifier si la case est cochée
+    const officialOnly = document.getElementById("officialOnly").checked;
 
-      const title = video.snippet.title;
-      const channel = video.snippet.channelTitle;
-      const date = new Date(video.snippet.publishedAt).toLocaleDateString();
-      const videoId = video.id.videoId;
-      const thumbnail = video.snippet.thumbnails.medium.url;
+    if (officialOnly) {
+      query += ' (clip officiel)';
+	     // "clip officiel";
+    }
 
-      const div = document.createElement("div");
-      div.className = "video";
+    const response = await fetch("/search?q=" + encodeURIComponent(query));
+    const data = await response.json();
 
-      div.innerHTML = `
-        ${thumbnail}
+    displayResults(data.items);
 
-        <h3>${title}</h3>
-        <p>Chaîne: ${channel}</p>
-        <p>Date: ${date}</p>
-
-        <div class="buttons">
-          <button class="watch" onclick="openVideo('${videoId}')">
-            ▶️ Regarder
-          </button>
-
-          <button class="download" onclick="downloadVideo('${videoId}', this)">
-            📥 Télécharger
-          </button>
-        </div>
-      `;
-
-      container.appendChild(div);
-    });
-
-  } catch (error) {
-    console.error(error);
-    document.getElementById("error").innerText = "❌ " + error.message;
+  } catch (err) {
+    console.error("Erreur searchVideos:", err);
   }
 }
 
-// ✅ Ouvre YouTube dans un nouvel onglet
+
+//Charge le resultat
+async function loadVideos(query) {
+  try {
+    const res = await fetch("/search?q=" + encodeURIComponent(query));
+    const data = await res.json();
+
+    displayResults(data.items);
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// affichage du résultat
+function displayResults(videos) {
+  const container = document.getElementById("videos");
+  container.innerHTML = "";
+
+  videos.forEach(video => {
+    if (!video.id?.videoId) return;
+
+    const title = video.snippet.title;
+    const channel = video.snippet.channelTitle;
+    const date = new Date(video.snippet.publishedAt).toLocaleDateString();
+    const videoId = video.id.videoId;
+    const thumbnail = video.snippet.thumbnails.medium.url;
+
+    const div = document.createElement("div");
+    div.className = "video";
+
+    div.innerHTML = `
+      <img src="${thumbnail}" />
+      <h3>${title}</h3>
+      <p>Chaîne: ${channel}</p>
+      <p>Date: ${date}</p>
+
+      <div class="buttons">
+        <button class="watch" onclick="openVideo('${videoId}')">
+          ▶️ Regarder
+        </button>
+
+        <button class="download" onclick="downloadVideo('${videoId}', this)">
+          📥 Télécharger
+        </button>
+      </div>
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+// ✅ Téléchargement sans quitter la page
+function downloadVideo(videoId, button) {
+  button.innerText = "⏳...";
+
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = "/download/" + videoId;
+
+  document.body.appendChild(iframe);
+
+  setTimeout(() => {
+    button.innerText = "✅";
+  }, 2000);
+}
+
+// Regarder la vidéo
+
 function openVideo(videoId) {
   const url = `https://www.youtube.com/watch?v=${videoId}`;
   window.open(url, "_blank");
 }
 
-// ✅ Téléchargement sans quitter la page
-async function downloadVideo(videoId, button) {
-  try {
-    button.innerText = "⏳...";
 
-    const response = await fetch("/download/" + videoId);
+// ✅ déclenche la recherche avec la touche Entrée
+document.getElementById("searchInput")
+    .addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        searchVideos();
+      }
+    });
 
-    const contentType = response.headers.get("content-type");
 
-    if (!response.ok) {
-      const err = await response.json().catch(() => null);
-      throw new Error(err?.error || "Erreur téléchargement");
-    }
-
-    const blob = await response.blob();
-
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-
-    a.href = url;
-    a.download = videoId + ".mp3";
-
-    document.body.appendChild(a);
-    a.click();
-
-    a.remove();
-    window.URL.revokeObjectURL(url);
-
-    button.innerText = "✅";
-
-  } catch (error) {
-    console.error(error);
-    button.innerText = "❌";
-    alert(error.message);
-  }
-}
-
-// 🚀 lancement
-loadVideos();
 </script>
 
 </body>
