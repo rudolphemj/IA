@@ -71,11 +71,17 @@ app.get("/download/:id", (req, res) => {
   const videoId = req.params.id;
   const url = `https://www.youtube.com/watch?v=${videoId}`;
 
-  const outputTemplate = path.join(
-    DOWNLOAD_DIR,
-    `${videoId}.%(ext)s`
-  );
+ // const outputTemplate = path.join(
+ //   DOWNLOAD_DIR,
+ //   `${videoId}.%(ext)s`
+ // );
+  
+const outputTemplate = path.join(
+  DOWNLOAD_DIR,
+  "%(artist, uploader)s - %(title)s.%(ext)s"
+);
 
+  
   const command = `yt-dlp -f bestaudio -x --audio-format mp3 --audio-quality 0 --no-playlist --restrict-filenames --force-overwrites -o "${outputTemplate}" "${url}"`;
 
   console.log("CMD:", command);
