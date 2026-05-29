@@ -22,9 +22,9 @@ if (!fs.existsSync(DOWNLOAD_DIR)) {
 /* --------------------------
    ✅ UTILS
 -------------------------- */
-function getDate90DaysAgo() {
+function getDateDaysAgo() {
   const date = new Date();
-  date.setDate(date.getDate() - 90);
+  date.setDate(date.getDate() - 365);
   return date.toISOString().split(".")[0] + "Z";
 }
 
@@ -45,10 +45,14 @@ app.get("/search", async (req, res) => {
         params: {
           part: "snippet",
           q: query,
-          type: "video",
-          order: "date",
+		  videoDuration: "short",
+		  videoCategoryId: 10,
+           type: "video",
+          //type: "channel",
+		  //type: "playlist",
+		  order: "date",
           maxResults: 20,
-          publishedAfter: getDate90DaysAgo(),
+          publishedAfter: getDateDaysAgo(),
           key: API_KEY,
         },
       }
@@ -78,12 +82,16 @@ app.get("/download/:id", (req, res) => {
   
 const outputTemplate = path.join(
   DOWNLOAD_DIR,
-  "%(artist, uploader)s - %(title)s.%(ext)s"
+ // "%(artist, uploader)s - %(title)s.%(ext)s"
+ //"%(artist&%(artist)s - )s%(title)s.%(ext)s"
+ // "%(artist&%(artist)s - )s%(title)s.%(ext)s"
+  "%(uploader)s - %(title)s.%(ext)s"
 );
 
   
-  const command = `yt-dlp -f bestaudio -x --audio-format mp3 --audio-quality 0 --no-playlist --restrict-filenames --force-overwrites -o "${outputTemplate}" "${url}"`;
-
+//  const command = `yt-dlp -f bestaudio -x --audio-format mp3 --audio-quality 0 --no-playlist --restrict-filenames --force-overwrites -o "${outputTemplate}" "${url}"`;
+  const command = `yt-dlp -f bestaudio -x --audio-format mp3 --audio-quality 0 --no-playlist --force-overwrites --embed-metadata --add-metadata --windows-filenames -o "${outputTemplate}" "${url}"`;
+  
   console.log("CMD:", command);
 
   exec(command, (error, stdout, stderr) => {
