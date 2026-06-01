@@ -33,35 +33,38 @@ function getDateDaysAgo() {
 -------------------------- */
 app.get("/search", async (req, res) => {
   const query = req.query.q;
+  const type = req.query.type || "video"; // ✅ récupère le type
 
   if (!query) {
     return res.status(400).json({ error: "Paramètre q manquant" });
   }
 
   try {
+    // ✅ paramètres de base
+    const params = {
+      part: "snippet",
+      q: query,
+      type: type,
+      maxResults: 20,
+      key: API_KEY,
+    };
+
+    // ✅ UNIQUEMENT si c'est une vidéo
+    if (type === "video") {
+      params.videoDuration = "short";
+      params.videoCategoryId = 10;
+      params.order = "date";
+    }
+
     const response = await axios.get(
       "https://www.googleapis.com/youtube/v3/search",
-      {
-        params: {
-          part: "snippet",
-          q: query,
-		  videoDuration: "short",
-		  videoCategoryId: 10,
-           type: "video",
-          //type: "channel",
-		  //type: "playlist",
-		  order: "date",
-          maxResults: 20,
-          publishedAfter: getDateDaysAgo(),
-          key: API_KEY,
-        },
-      }
+      { params }
     );
 
     res.json(response.data);
+
   } catch (error) {
     console.error("❌ API ERROR:", error.response?.data || error.message);
-
     res.status(500).json({
       error: error.response?.data || error.message,
     });
@@ -128,6 +131,12 @@ const outputTemplate = path.join(
     }, 500);
   });
 });
+
+//
+function openPlaylist(id) {
+  window.open(`https://www.youtube.com/playlist?list=${id}`, "_blank");
+}
+
 
 
 app.use(express.static("public"));

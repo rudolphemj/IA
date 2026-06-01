@@ -2,224 +2,63 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Clips Shatta récents</title>
-
+  <title>Accueil</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: #111;
       color: white;
-      margin: 0;
-      padding: 20px;
+      text-align: center;
+      padding: 50px;
     }
 
     h1 {
-      text-align: center;
+      margin-bottom: 40px;
     }
 
-    #videos {
+    .menu {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
+      gap: 20px;
     }
 
-    .video {
+    a {
+      text-decoration: none;
+    }
+
+    .card {
       background: #1e1e1e;
+      padding: 30px;
       border-radius: 10px;
-      margin: 10px;
-      padding: 15px;
-      width: 300px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-
-    .video img {
-      width: 100%;
-      border-radius: 8px;
-    }
-
-    .video h3 {
-      font-size: 16px;
-      margin: 10px 0;
-    }
-
-    .video p {
-      margin: 5px 0;
-      font-size: 13px;
-      color: #ccc;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    button {
-      flex: 1;
-      padding: 8px;
-      border: none;
-      border-radius: 5px;
+      width: 200px;
       cursor: pointer;
-      font-weight: bold;
+      transition: 0.3s;
     }
 
-    .watch {
-      background: #ff0000;
-      color: white;
-    }
-
-    .download {
-      background: #00d4ff;
-      color: black;
-    }
-
-    .error {
-      text-align: center;
-      color: red;
-      margin-top: 20px;
+    .card:hover {
+      background: #333;
+      transform: scale(1.05);
     }
   </style>
 </head>
 
 <body>
 
-<h1>🔥 Nouveaux clips Shatta (60 jours)</h1>
+<h1>🎬 Menu principal</h1>
 
-<div id="videos"></div>
-<div id="error" class="error"></div>
+<div class="menu">
+  <a href="videos.html">
+    <div class="card">🔍 Vidéos</div>
+  </a>
 
-<input id="searchInput" type="text" placeholder="Recherche une vidéo...">
+  <a href="playlists.html">
+    <div class="card">📺 Playlists</div>
+  </a>
 
-<label style="margin-left:10px;">
-  <input type="checkbox" id="officialOnly">
-  🎬 Clip officiel
-</label>
-
-
-
-<button onclick="searchVideos()"> 🔍 Rechercher</button>
-
-
-<div id="results"></div>
-
-<script>
-
-// propose une recherche
-async function searchVideos() {
-
-
-  try {
-    let query = document.getElementById("searchInput").value;
-
-    if (!query) {
-      alert("Veuillez entrer un texte");
-      return;
-    }
-
-
- // ✅ vérifier si la case est cochée
-    const officialOnly = document.getElementById("officialOnly").checked;
-
-    if (officialOnly) {
-      query += ' (clip officiel)';
-	     // "clip officiel";
-    }
-
-    const response = await fetch("/search?q=" + encodeURIComponent(query));
-    const data = await response.json();
-
-    displayResults(data.items);
-
-  } catch (err) {
-    console.error("Erreur searchVideos:", err);
-  }
-}
-
-
-//Charge le resultat
-async function loadVideos(query) {
-  try {
-    const res = await fetch("/search?q=" + encodeURIComponent(query));
-    const data = await res.json();
-
-    displayResults(data.items);
-
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// affichage du résultat
-function displayResults(videos) {
-  const container = document.getElementById("videos");
-  container.innerHTML = "";
-
-  videos.forEach(video => {
-    if (!video.id?.videoId) return;
-
-    const title = video.snippet.title;
-    const channel = video.snippet.channelTitle;
-    const date = new Date(video.snippet.publishedAt).toLocaleDateString();
-    const videoId = video.id.videoId;
-    const thumbnail = video.snippet.thumbnails.medium.url;
-
-    const div = document.createElement("div");
-    div.className = "video";
-
-    div.innerHTML = `
-      <img src="${thumbnail}" />
-      <h3>${title}</h3>
-      <p>Chaîne: ${channel}</p>
-      <p>Date: ${date}</p>
-
-      <div class="buttons">
-        <button class="watch" onclick="openVideo('${videoId}')">
-          ▶️ Regarder
-        </button>
-
-        <button class="download" onclick="downloadVideo('${videoId}', this)">
-          📥 Télécharger
-        </button>
-      </div>
-    `;
-
-    container.appendChild(div);
-  });
-}
-
-// ✅ Téléchargement sans quitter la page
-function downloadVideo(videoId, button) {
-  button.innerText = "⏳...";
-
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.src = "/download/" + videoId;
-
-  document.body.appendChild(iframe);
-
-  setTimeout(() => {
-    button.innerText = "✅";
-  }, 2000);
-}
-
-// Regarder la vidéo
-
-function openVideo(videoId) {
-  const url = `https://www.youtube.com/watch?v=${videoId}`;
-  window.open(url, "_blank");
-}
-
-
-// ✅ déclenche la recherche avec la touche Entrée
-document.getElementById("searchInput")
-    .addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        searchVideos();
-      }
-    });
-
-
-</script>
+  <a href="channels.html">
+    <div class="card">📡 Chaînes</div>
+  </a>
+</div>
 
 </body>
 </html>
