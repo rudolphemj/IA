@@ -15,9 +15,34 @@ const DOWNLOAD_DIR = path.join(__dirname, "downloads");
 if (!fs.existsSync(DOWNLOAD_DIR)) {
   fs.mkdirSync(DOWNLOAD_DIR);
 }
+/* --------------------------
+   ✅ LISTE DES FICHIERS DOWNLOAD
+-------------------------- */
+app.get("/api/files", (req, res) => {
+  fs.readdir(DOWNLOAD_DIR, (err, files) => {
+    if (err) {
+      return res.status(500).json({ error: "Erreur lecture dossier" });
+    }
 
-//app.use(express.static("public"));
-//app.use(express.json());
+    // infos détaillées (nom + taille + date)
+    const result = files.map(file => {
+      const filePath = path.join(DOWNLOAD_DIR, file);
+      const stats = fs.statSync(filePath);
+
+      return {
+        name: file,
+        size: stats.size,
+        modified: stats.mtime
+      };
+    });
+
+    res.json(result);
+  });
+});
+
+// ✅ rendre les fichiers accessibles via URL
+app.use("/files", express.static(DOWNLOAD_DIR));
+
 
 /* --------------------------
    ✅ UTILS
@@ -33,27 +58,33 @@ function getDateDaysAgo() {
 -------------------------- */
 app.get("/search", async (req, res) => {
   const query = req.query.q;
-  const type = req.query.type || "video"; // ✅ récupère le type
 
   if (!query) {
     return res.status(400).json({ error: "Paramètre q manquant" });
   }
 
   try {
-    // ✅ paramètres de base
+    const type = req.query.type || "video";
+
     const params = {
       part: "snippet",
       q: query,
       type: type,
       maxResults: 20,
-      key: API_KEY,
+      key: API_KEY
     };
 
-    // ✅ UNIQUEMENT si c'est une vidéo
+    // ✅ vidéos uniquement
     if (type === "video") {
       params.videoDuration = "short";
       params.videoCategoryId = 10;
       params.order = "date";
+      params.publishedAfter = getDateDaysAgo();
+    }
+
+    // ✅ chaînes + playlists
+    if (type === "channel" || type === "playlist") {
+      params.order = "relevance";
     }
 
     const response = await axios.get(
@@ -65,6 +96,7 @@ app.get("/search", async (req, res) => {
 
   } catch (error) {
     console.error("❌ API ERROR:", error.response?.data || error.message);
+
     res.status(500).json({
       error: error.response?.data || error.message,
     });
