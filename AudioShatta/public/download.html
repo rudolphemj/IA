@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Télécharger</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
+    input {
+      width: 300px;
+      padding: 10px;
+      border-radius: 5px;
+      border: none;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background: #00d4ff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #00aacc;
+    }
+
+    #status {
+      margin-top: 20px;
+      color: #ccc;
+    }
+
+    a {
+      display: block;
+      margin-top: 30px;
+      color: white;
+    }
+	
+	
+
+button {
+  margin: 5px;
+}
+
+button:nth-child(2) {
+  background: #4caf50;
+  color: white;
+}
+
+button:nth-child(2):hover {
+  background: #3e8e41;
+}
+
+
+  </style>
+</head>
+
+<body>
+
+<h1>📥 Télécharger une vidéo</h1>
+
+<input id="urlInput" type="text" placeholder="Colle l’URL YouTube ici..." />
+
+<br><br>
+
+<button onclick="download()">📥 Télécharger MP3</button>
+<button onclick="pasteClipboard()">📋 Coller</button>
+<button onclick="clearInput()">❌ Vider</button>
+
+
+<div id="status"></div>
+
+<a href="index.html">⬅ Retour</a>
+
+<script>
+
+function clearInput() {
+  document.getElementById("urlInput").value = "";
+  document.getElementById("status").innerText = "";
+}
+
+
+function extractVideoId(url) {
+  const regExp = /(?:youtube\.com.*(?:\?|&)v=|youtu\.be\/)([^&\n?#]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+}
+
+function download() {
+  const url = document.getElementById("urlInput").value;
+  const status = document.getElementById("status");
+
+  if (!url) {
+    alert("Entre une URL !");
+    return;
+  }
+
+  const videoId = extractVideoId(url);
+
+  if (!videoId) {
+    alert("URL invalide !");
+    return;
+  }
+
+  status.innerText = "⏳ Téléchargement en cours...";
+
+  // téléchargement via ton serveur
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = "/download/" + videoId;
+  document.body.appendChild(iframe);
+
+  setTimeout(() => {
+    status.innerText = "✅ Téléchargement lancé !";
+  }, 2000);
+}
+
+
+async function pasteClipboard() {
+  const status = document.getElementById("status");
+
+  try {
+    const text = await navigator.clipboard.readText();
+    document.getElementById("urlInput").value = text;
+    status.innerText = "✅ URL collée depuis le presse‑papier";
+  } catch (err) {
+    console.error(err);
+    status.innerText = "❌ Impossible d'accéder au presse‑papier";
+  }
+}
+
+</script>
+
+</body>
+</html>
